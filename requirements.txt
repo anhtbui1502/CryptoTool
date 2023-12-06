@@ -1,0 +1,6 @@
+customtkinter
+tk
+packaging
+tkcalendar
+requests
+pybit
