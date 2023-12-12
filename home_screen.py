@@ -7,6 +7,8 @@
 import socket
 import tkinter as tk
 from tkinter import ttk
+import bybit_api
+
 
 from base_screen import BaseScreen
 
@@ -93,7 +95,7 @@ class HomeScreen(BaseScreen):
 
         label_leverage = ttk.Label(self, text="Leverage:")
         label_leverage.grid(row=2, column=11, padx=2, sticky=tk.W, pady=1)
-        # Tạo Combobox
+        # Tแบกo Combobox
         self.combo_leverage = ttk.Combobox(self, values=self._load_option_leverage_selected(), width=8, background="white",
                                            foreground="black")
         self.combo_leverage.grid(row=2, column=12, pady=1)
@@ -247,20 +249,20 @@ class HomeScreen(BaseScreen):
         horizontal_scroll.config(command=table_info.xview)
 
         mapping_headers_width = {
-            "Id": 10,
-            "Command code": 100,
+            "Symbol": 90,
             "Type": 90,
             "Date": 90,
-            "Price": 90,
-            "Entry price": 90,
-            "Status": 90,
+            "Leverage": 90,
+            "EntryPrice": 90,
+            "MarkPrice": 90,
+            "Volume": 90,
+            "Pnl": 90,
             "Target 1": 90,
             "Target 2": 90,
             "Target 3": 90,
             "Target 4": 90,
             "Target 5": 90,
-            "Stop loss": 90,
-            "Volume": 90
+            "Stop loss": 90
         }
 
         table_info["columns"] = [self._convert_text_to_column(key) for key in mapping_headers_width.keys()]
@@ -270,26 +272,32 @@ class HomeScreen(BaseScreen):
             table_info.heading(index, text=header, anchor=tk.CENTER)
             table_info.column(index, anchor=tk.CENTER, width=width)
 
-        # Sample data
-        data = [
-            ('1', 'Ninja', '101', 'Oklahoma', 'Moore'),
-            ('2', 'Ranger', '102', 'Wisconsin', 'Green Bay'),
-            ('2', 'Ranger', '102', 'Wisconsin', 'Green Bay'),
-            ('2', 'Ranger', '102', 'Wisconsin', 'Green Bay'),
-            ('2', 'Ranger', '102', 'Wisconsin', 'Green Bay'),
-            ('2', 'Ranger', '102', 'Wisconsin', 'Green Bay'),
-            ('2', 'Ranger', '102', 'Wisconsin', 'Green Bay'),
-            ('2', 'Ranger', '102', 'Wisconsin', 'Green Bay'),
-            ('2', 'Ranger', '102', 'Wisconsin', 'Green Bay'),
-            ('2', 'Ranger', '102', 'Wisconsin', 'Green Bay'),
-            ('2', 'Ranger', '102', 'Wisconsin', 'Green Bay'),
-            ('2', 'Ranger', '102', 'Wisconsin', 'Green Bay', '1.2'),
-        ]
-        for item in data:
-            table_info.insert(parent='', index='end', values=item)
-
+        # # Sample data
+        # data = [
+        #     ('1', 'Ninja', '101', 'Oklahoma', 'Moore'),
+        #     ('2', 'Ranger', '102', 'Wisconsin', 'Green Bay'),
+        #     ('2', 'Ranger', '102', 'Wisconsin', 'Green Bay'),
+        #     ('2', 'Ranger', '102', 'Wisconsin', 'Green Bay'),
+        #     ('2', 'Ranger', '102', 'Wisconsin', 'Green Bay'),
+        #     ('2', 'Ranger', '102', 'Wisconsin', 'Green Bay'),
+        #     ('2', 'Ranger', '102', 'Wisconsin', 'Green Bay'),
+        #     ('2', 'Ranger', '102', 'Wisconsin', 'Green Bay'),
+        #     ('2', 'Ranger', '102', 'Wisconsin', 'Green Bay'),
+        #     ('2', 'Ranger', '102', 'Wisconsin', 'Green Bay'),
+        #     ('2', 'Ranger', '102', 'Wisconsin', 'Green Bay'),
+        #     ('2', 'Ranger', '102', 'Wisconsin', 'Green Bay', '1.2'),
+        # ]
         table_info.pack(fill='both', expand=True)
-        table_info.after()
+        self.fill_table(table_info,frame_show_table)
+        # frame_show_table.mainloop()
+
+    def fill_table(self, table_info, frame_show_table):
+        data = bybit_api.get_current_position()
+        for item in data.values.tolist():
+            table_info.insert(parent='', index='end', values=item)
+		# Đoạn code này dùng reload table
+        # frame_show_table.after(600000, self.fill_table(table_info, frame_show_table))
+
 
     def _set_row_next(self, row):
         self.row_next = row + 1
