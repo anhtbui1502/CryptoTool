@@ -21,14 +21,6 @@ def get_current_position() -> DataFrame:
     result=format_data(response)
     print(result)
     return result
-	
-def get_current_order() -> DataFrame:
-	session = create_connection()
-    response=session.get_open_orders(category="linear", settleCoin="USDT",  openOnly=0, limit=1)
-    print(response)
-    result=format_data(response)
-    print(result)
-    return result
 
 def format_data(response):
     if response.get('retCode') != 0:
@@ -55,37 +47,3 @@ def format_data(response):
         )
 
     return data
-	
-def calcel_order(symbol, order_id):
-	session = create_connection()
-    response=session.cancel_order(category="linear", symbol=symbol, orderId=order_id)
-    print(response)
-	
-def place_order(symbol, side, price, qty, tp, sl, leverage):
-	session = create_connection()
-    response=session.place_order(
-		category="linear",
-		symbol=symbol,
-		side=side,
-		orderType="Limit",
-		qty=qty,
-		price=price,
-		isLeverage=leverage,
-		takeProfit=tp,
-		stopLoss=sl
-	)
-    print(response)
-	
-def update_order(symbol, order_link_id, tp, sl):
-	session = create_connection()
-    response=session.amend_order(
-		category="linear",
-		symbol=symbol,
-		orderLinkId=order_link_id,
-		takeProfit=tp,
-		stopLoss=sl
-	)
-    print(response)
-
-
-
